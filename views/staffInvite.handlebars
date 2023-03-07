@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Invite</title>
+
+    <style>
+        body {
+            background-color:gainsboro;
+        }
+        i, a {
+            color: hotpink;
+        }
+        button {
+            color: brown;
+            padding: 8px 12px;
+            border: 1px solid #ED2939;
+            border-radius: 2px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;  
+        }
+    </style>
+</head>
+<body>
+    <h2> RESERVELY Employee Onboarding </h2>
+    <p>Hello <i>{{name}}</i>, Welcome to Reservely, we are super excited for you to use our app! Your super boss <a href="mailto: {{bossmail}}"><i>{{bossName}}</i> </a>
+    
+    has invited you to join them on RESERVELY as an Employee. This email contains the necessary instructions for you to complete
+    your self onboarding process (fancy for registration!)</p>
+    <p>To gain access to all of the fun features we have prepared for you,
+         firstly, you must complete your registration by clicking on the button below. After doing so, plase input your information
+         as requested on the form </p>
+         <br>
+    <a href="{{confirmURL}}"> <button>VERIFY</button> </a>
+    <br>
+    <p>This link will verify your email address, and then you will officially be a part of the RESERVELY community.</p>
+    <p><i>PLEASE NOTE, THIS LINK IS VALID FOR TWO DAYS ONLY</i></p>
+    
+    <br>
+
+    <h4>See you there!</h4>
+    <h4><i>Best regards, from all of us @RESERVELY</i></h4>
+
+
+
+</body>
+</html>
