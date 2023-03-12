@@ -1,4 +1,4 @@
-const { User, Business, Service } =  require('../models/index')
+const { User, Business, Service, Appointment } =  require('../models/index')
 const {StatusCodes} = require('http-status-codes')
 const { BadRequestError, UnauthenticatedError, NotFoundError } =  require('../errors/index')
 const { validationResult } = require('express-validator')
@@ -74,10 +74,26 @@ const deleteService = async(req, res) => {
     res.status(StatusCodes.OK).send()
 }
 
+const getWaitList = async (req, res) => {
+    const user = req.user.userId
+    if(!user) throw new UnauthenticatedError('You have to be logged in to see waitlist')
+
+    const owner = await User.findById({_id: user})
+
+    const waitlist = await Appointment.find({ 
+        business: owner.business 
+    })
+    .where({ status: 'waiting' })
+    .sort('createdAt')
+
+    res.status(StatusCodes.OK).json({ success: true, waitlist})
+}
+
 
 module.exports = {
     getDashboard,
     addService,
     updateService,
     deleteService,
+    getWaitList
 }
