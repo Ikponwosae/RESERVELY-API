@@ -81,6 +81,39 @@ const staffOnboard = async(recipient, name, url, boss, bossmail) => {
   }
 }
 
+const createAppointmentEmail = async(recipient, name, business, service) => {
+  const handlebarOptions = {
+    viewEngine: {
+      extName: ".handlebars",
+      partialsDir: path.resolve('./views'),
+      defaultLayout: false,
+    },
+    viewPath: path.resolve('./views')
+  }
+
+  transporter.use('compile', hbs(handlebarOptions))
+
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: recipient,
+    subject: "Appointment Created",
+    template: "createAppointment",
+    context: {
+      name: name,
+      businessName : business,
+      serviceName : service
+    }
+  }
+
+  try {
+    transporter.sendMail(options, (info) => {
+      console.log(info)
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 // const sgMail = require('@sendgrid/mail')
 // sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 // const msg = {
@@ -102,4 +135,5 @@ const staffOnboard = async(recipient, name, url, boss, bossmail) => {
 module.exports = {
   verifyAccount,
   staffOnboard,
+  createAppointmentEmail
 }
