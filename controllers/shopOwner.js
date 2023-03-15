@@ -86,7 +86,7 @@ const getWaitList = async (req, res) => {
     .where({ status: 'waiting' })
     .sort('createdAt')
 
-    res.status(StatusCodes.OK).json({ success: true, waitlist})
+    res.status(StatusCodes.OK).json({ success: true, waitlist, count: waitlist.length})
 }
 
 
