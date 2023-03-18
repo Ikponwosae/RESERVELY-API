@@ -89,11 +89,56 @@ const getWaitList = async (req, res) => {
     res.status(StatusCodes.OK).json({ success: true, waitlist, count: waitlist.length})
 }
 
+// @desc list of available staffs for a particular day and time range
+// @route GET /api/v1/owner/staff/available/YYYY-MM-DD?startTime=&endTime=
+// @access All
+const getAvailableStaffs = async (req, res) => {
+    const user = req.user.userId
+    if(!user) throw new UnauthenticatedError('You have to be logged in to see waitlist')
+    const owner = await User.findById({_id: user})
+
+    const day = new Date(`${req.params.year}-${req.params.month}-${req.params.day}`);
+    day.setHours(0,0,0,0)
+
+    const formatStartTime = req.query.startTime.split(':')
+    const startHour = formatStartTime[0]
+    const startMinutes = formatStartTime[1]
+
+    const formatEndTime = req.query.endTime.split(':')
+    const endHour = formatEndTime[0]
+    const endMinutes = formatEndTime[1]
+
+    const startRange = new Date(`${req.params.year}-${req.params.month}-${req.params.day} ${startHour}:${startMinutes}`);
+    startRange.setSeconds(0)
+
+    const endRange =  new Date(`${req.params.year}-${req.params.month}-${req.params.day} ${endHour}:${endMinutes}`);
+    endRange.setSeconds(0)
+
+    const availableStaff = await User.find({
+        role: "staff",
+        business: owner.business,
+        _id: {
+            $nin: await Appointment.distinct("users", {
+                bookDate: day,
+                $or: [
+                    { $and: [{ startTime: { $lte: startRange } }, { endTime: { $gte: startRange } }] },
+                    { $and: [{ startTime: { $lte: endRange } }, { endTime: { $gte: endRange } }] },
+                    { $and: [{ startTime: { $gte: startRange } }, { endTime: { $lte: endRange } }] }
+                  ]
+            })
+        }
+    });
+
+    res.status(StatusCodes.OK).json({ success: true, availableStaff, count: availableStaff.length})
+
+}
+
 
 module.exports = {
     getDashboard,
     addService,
     updateService,
     deleteService,
-    getWaitList
+    getWaitList,
+    getAvailableStaffs
 }

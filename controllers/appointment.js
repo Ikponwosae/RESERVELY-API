@@ -11,20 +11,27 @@ const createAppointment = async (req, res) => {
     if(!user) throw new UnauthenticatedError('You have to be logged in to create an appointment')
     const userExists = await User.findById({_id: req.user.userId})
 
-    const { start, serviceId } = req.body
+    let { start, bookDate, serviceId } = req.body
     
     const { params: {id: business } } = req
     const businessExists = await Business.findOne({_id: business}) 
     if (!businessExists) throw new NotFoundError('A business with that id cannot be found')
 
     const service = await Service.findById({_id: serviceId})
+
+    const defaultDate = new Date(bookDate);
+    defaultDate.setHours(0,0,0,0)
+    bookDate = defaultDate
+
     const startTime = new Date(start)
+    startTime.setSeconds(0)
 
     const endTime = new Date(start)
     endTime.setMinutes(startTime.getMinutes() + service.duration)
+    endTime.setSeconds(0)
 
     const appointment =  await Appointment.create({
-        startTime, endTime, service, business, users: user
+        startTime, endTime, bookDate, service, business, users: user
     })
 
     //send appointment email

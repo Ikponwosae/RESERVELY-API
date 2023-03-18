@@ -39,7 +39,7 @@ const unavailableTimes = async(id, date=new Date()) => {
         $and: [ {
             $or: [ { status: 'ongoing' },  { status: 'waiting' }, { status: 'approved'} ]
         }, 
-        { bookDate : `${dateToFind}` } ]
+        { bookDate : dateToFind } ]
     })
     .sort('createdAt')
 

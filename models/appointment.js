@@ -2,15 +2,16 @@ const mongoose = require('mongoose')
 
 const AppointmentSchema = mongoose.Schema({
     startTime: {
-        type: String,
+        type: Date,
         required : [true, "Select a valid time"]
     },
     endTime: {
-        type: String,
+        type: Date,
         required : [true, "Select a valid time"]
     },
     bookDate: {
-        type: String
+        type: Date,
+        required: [true, "Select a valid date"]
     },
     users: [
         {
@@ -37,9 +38,6 @@ const AppointmentSchema = mongoose.Schema({
 { timestamp: true})
 
 AppointmentSchema.pre('save', async function() {
-    const defaultDate = new Date();
-    defaultDate.setHours(0,0,0,0)
-    this.bookDate = defaultDate
     this.status = 'waiting'
 })
 
