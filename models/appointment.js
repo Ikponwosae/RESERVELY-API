@@ -37,7 +37,9 @@ const AppointmentSchema = mongoose.Schema({
 { timestamp: true})
 
 AppointmentSchema.pre('save', async function() {
-    this.bookDate = new Date()
+    const defaultDate = new Date();
+    defaultDate.setHours(0,0,0,0)
+    this.bookDate = defaultDate
     this.status = 'waiting'
 })
 
