@@ -32,7 +32,7 @@ const AppointmentSchema = mongoose.Schema({
     },
     business: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "BusinessInstance"
+        ref: "Business"
     }
 },
 { timestamp: true})
