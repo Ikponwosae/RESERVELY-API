@@ -114,6 +114,76 @@ const createAppointmentEmail = async(recipient, name, business, service) => {
   }
 }
 
+const approvedAppointmentUserEmail = async(recipient, name, staff, day, time, business, service) => {
+  const handlebarOptions = {
+    viewEngine: {
+      extName: ".handlebars",
+      partialsDir: path.resolve('./views'),
+      defaultLayout: false,
+    },
+    viewPath: path.resolve('./views')
+  }
+
+  transporter.use('compile', hbs(handlebarOptions))
+
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: recipient,
+    subject: "Appointment Approved",
+    template: "approvedAppointmentUser",
+    context: {
+      name: name,
+      staff: staff,
+      day: day,
+      time: time,
+      businessName : business,
+      serviceName : service
+    }
+  }
+
+  try {
+    transporter.sendMail(options, (info) => {
+      console.log(info)
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const scheduleAppointmentStaffEmail = async(recipient, name, customer, day, time) => {
+  const handlebarOptions = {
+    viewEngine: {
+      extName: ".handlebars",
+      partialsDir: path.resolve('./views'),
+      defaultLayout: false,
+    },
+    viewPath: path.resolve('./views')
+  }
+
+  transporter.use('compile', hbs(handlebarOptions))
+
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: recipient,
+    subject: "Appointment Scheduled",
+    template: "scheduleAppointmentStaff",
+    context: {
+      customer: customer,
+      name: name,
+      day: day,
+      time: time
+    }
+  }
+
+  try {
+    transporter.sendMail(options, (info) => {
+      console.log(info)
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 // const sgMail = require('@sendgrid/mail')
 // sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 // const msg = {
@@ -135,5 +205,7 @@ const createAppointmentEmail = async(recipient, name, business, service) => {
 module.exports = {
   verifyAccount,
   staffOnboard,
-  createAppointmentEmail
+  createAppointmentEmail,
+  approvedAppointmentUserEmail,
+  scheduleAppointmentStaffEmail
 }

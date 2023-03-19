@@ -25,6 +25,7 @@ const adminRouter = require('./routes/admin')
 const ownerRouter = require('./routes/shopOwner')
 const businessRouter = require('./routes/business')
 const staffRouter = require('./routes/staff')
+const appointmentRouter = require('./routes/appointment')
 
 // error handler
 const notFoundMiddleware = require('./middleware/not-found');
@@ -42,6 +43,7 @@ app.use('/api/v1/admin', auth, authoRize(ROLES.ADMIN), adminRouter)
 app.use('/api/v1/owner', auth, authoRize(ROLES.SHOPOWNER), ownerRouter)
 app.use('/api/v1/business', businessRouter)
 app.use('/api/v1/staff', staffRouter)
+app.use('/api/v1/appointment', appointmentRouter)
 // app.use('/api/v1/jobs', auth, jobsRouter)
 
 

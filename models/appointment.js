@@ -2,15 +2,16 @@ const mongoose = require('mongoose')
 
 const AppointmentSchema = mongoose.Schema({
     startTime: {
-        type: String,
+        type: Date,
         required : [true, "Select a valid time"]
     },
     endTime: {
-        type: String,
+        type: Date,
         required : [true, "Select a valid time"]
     },
     bookDate: {
-        type: String
+        type: Date,
+        required: [true, "Select a valid date"]
     },
     users: [
         {
@@ -31,13 +32,12 @@ const AppointmentSchema = mongoose.Schema({
     },
     business: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "BusinessInstance"
+        ref: "Business"
     }
 },
 { timestamp: true})
 
 AppointmentSchema.pre('save', async function() {
-    this.bookDate = new Date()
     this.status = 'waiting'
 })
 

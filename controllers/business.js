@@ -28,7 +28,37 @@ const getService = async (req, res) => {
     res.status(StatusCodes.OK).json({service})
 }
 
+const unavailableTimes = async(id, date=new Date()) => {
+    const dateToFind = new Date(date)
+    dateToFind.setHours(0,0,0,0)
+
+    const times = await Appointment.find({ 
+        service: id
+    })
+    .where({
+        $and: [ {
+            $or: [ { status: 'ongoing' },  { status: 'waiting' }, { status: 'approved'} ]
+        }, 
+        { bookDate : dateToFind } ]
+    })
+    .sort('createdAt')
+
+    return times
+}
+
+// @desc list of unavailable times under a service
+// @route GET /api/v1/business/:id/services/:serviceId/unavailable
+// @access All
+const getUnavailableTimes = async (req, res) => {
+    const serviceId = req.params.serviceId
+    const date = new Date(`${req.params.year}-${req.params.month}-${req.params.day}`)
+    const times = await unavailableTimes(serviceId, date)
+
+    res.status(StatusCodes.OK).json({ success: true, times, count: times.length })
+}
+
 module.exports = {
     getServices,
     getService,
+    getUnavailableTimes
 }
