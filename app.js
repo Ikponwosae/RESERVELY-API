@@ -11,7 +11,7 @@ const ROLES = {
 
 
 //connectDB
-const connectDB = require('./db/connect')
+const { connectDB, startAgenda } = require('./db/connect')
 
 //launchAdmin
 const createAdmin = require('./db/addSuper')
@@ -55,6 +55,7 @@ const port = process.env.PORT || 4000;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI)
+    await startAgenda(process.env.MONGO_URI)
     app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
