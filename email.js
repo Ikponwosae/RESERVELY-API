@@ -184,6 +184,76 @@ const scheduleAppointmentStaffEmail = async(recipient, name, customer, day, time
   }
 }
 
+const appointmentReminderCustomerEmail = async(recipient, name, staff, day, time, business, service) => {
+  const handlebarOptions = {
+    viewEngine: {
+      extName: ".handlebars",
+      partialsDir: path.resolve('./views'),
+      defaultLayout: false,
+    },
+    viewPath: path.resolve('./views')
+  }
+
+  transporter.use('compile', hbs(handlebarOptions))
+
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: recipient,
+    subject: "Appointment Reminder",
+    template: "appointmentReminderUser",
+    context: {
+      name: name,
+      staff: staff,
+      day: day,
+      time: time,
+      businessName : business,
+      serviceName : service
+    }
+  }
+
+  try {
+    transporter.sendMail(options, (info) => {
+      console.log(info)
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const appointmentReminderStaffEmail = async(recipient, name, customer, day, time) => {
+  const handlebarOptions = {
+    viewEngine: {
+      extName: ".handlebars",
+      partialsDir: path.resolve('./views'),
+      defaultLayout: false,
+    },
+    viewPath: path.resolve('./views')
+  }
+
+  transporter.use('compile', hbs(handlebarOptions))
+
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: recipient,
+    subject: "Appointment Reminder",
+    template: "appointmentReminderStaff",
+    context: {
+      customer: customer,
+      name: name,
+      day: day,
+      time: time
+    }
+  }
+
+  try {
+    transporter.sendMail(options, (info) => {
+      console.log(info)
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 // const sgMail = require('@sendgrid/mail')
 // sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 // const msg = {
@@ -207,5 +277,7 @@ module.exports = {
   staffOnboard,
   createAppointmentEmail,
   approvedAppointmentUserEmail,
-  scheduleAppointmentStaffEmail
+  scheduleAppointmentStaffEmail,
+  appointmentReminderCustomerEmail,
+  appointmentReminderStaffEmail
 }

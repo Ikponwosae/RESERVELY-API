@@ -1,11 +1,16 @@
 const { Appointment, Business, Service, User } = require('../models/index')
 const { StatusCodes } = require('http-status-codes')
-const { BadRequestError, UnauthenticatedError, NotFoundError } = require('../errors/index')
+const { Agenda }= require('@hokify/agenda');
+require('dotenv').config();
+const { BadRequestError, UnauthenticatedError, NotFoundError} = require('../errors/index')
 const { 
     createAppointmentEmail,
     approvedAppointmentUserEmail,
-    scheduleAppointmentStaffEmail
+    scheduleAppointmentStaffEmail,
+    appointmentReminderCustomerEmail,
+    appointmentReminderStaffEmail
 } = require('../email')
+const THREE_HOURS = 60000 * 60 * 3;
 
 // @desc BOOK an appointment under a business
 // @route POST /api/v1/business/:id/book
@@ -101,6 +106,16 @@ const assignAndApprove = async (req, res) => {
         day,
         formattedStartTime + ' till ' + formattedEndTime)
 
+    await scheduleAppointment(
+        { email: userExists[0].email, firstName: userExists[0].firstName, lastName: userExists[0].lastName},
+        { email: staffExists.email, firstName: staffExists.firstName, lastName: staffExists.lastName},
+        startTime,
+        day, 
+        formattedStartTime, 
+        formattedEndTime, 
+        appointment.business.name, 
+        appointment.service.name)
+
     res.status(StatusCodes.OK).json({ success: true, appointment})
 }
 
@@ -117,7 +132,58 @@ const getTime = (time) => {
     return formattedTime
 }
 
+const scheduleAppointment = async (
+    customer, 
+    staff, 
+    deadline, 
+    day, 
+    startTime, 
+    endTime, 
+    businessName, 
+    serviceName) => {
+    try {
+        //create and Agenda instance and connect to the agenda server
+        const agenda = new Agenda({ db: { address: process.env.MONGO_URI }});
+
+        //scehdule reminder to happen three hours before appointment
+        await agenda.schedule(deadline - (THREE_HOURS), 'schedule reminder', { 
+            customer: customer, 
+            staff: staff, 
+            deadline: deadline, 
+            day: day, 
+            startTime: startTime, 
+            endTime: endTime, 
+            businessName: businessName, 
+            serviceName: serviceName });
+    } catch(error) {
+        //Log Agenda error.
+        console.log(error);
+        //Throw more friendly error to client
+        throw new BadRequestError('Error scheduling reminder');
+    }
+}
+
+const sendReminderEmail = async (data) => {
+    //send mail to staff and customer
+    await appointmentReminderCustomerEmail(
+        data.customer.email, 
+        data.customer.firstName + ' ' + data.customer.lastName,
+        data.staff.firstName + ' ' + data.staff.lastName,
+        data.day,
+        data.startTime + ' till ' + data.endTime,
+        data.businessName, 
+        data.serviceName)
+
+    await appointmentReminderStaffEmail(
+        data.staff.email, 
+        data.staff.firstName + ' ' + data.staff.lastName,
+        data.customer.firstName + ' ' + data.customer.lastName,
+        data.day,
+        data.startTime + ' till ' + data.endTime)
+}
+
 module.exports = {
     createAppointment,
-    assignAndApprove
+    assignAndApprove,
+    sendReminderEmail
 }
