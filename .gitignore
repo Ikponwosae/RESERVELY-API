@@ -1,3 +1,5 @@
 node_modules
 .env
+test.env
 test.js
+coverage
