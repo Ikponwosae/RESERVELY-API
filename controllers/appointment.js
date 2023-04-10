@@ -143,7 +143,7 @@ const scheduleAppointment = async (
     serviceName) => {
     try {
         //create and Agenda instance and connect to the agenda server
-        const agenda = new Agenda({ db: { address: process.env.MONGO_URI }});
+        const agenda = new Agenda({ db: { address: process.env.MONGO_URI_REMOTE }});
 
         //scehdule reminder to happen three hours before appointment
         await agenda.schedule(deadline - (THREE_HOURS), 'schedule reminder', { 
