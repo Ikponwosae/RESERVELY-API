@@ -26,8 +26,8 @@
     "supertest": "^6.3.3"
   },
   "scripts": {
-    "start": "nodemon app.js",
-    "dev": "env-cmd -f ./.env nodemon app.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "env-cmd -f ./test.env jest --watch-all --runInBand --bail"
   },
   "jest": {

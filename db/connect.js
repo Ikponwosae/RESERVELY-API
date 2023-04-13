@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const { Agenda } = require('@hokify/agenda');
 const { sendReminderEmail } = require('../controllers/appointment')
 
+mongoose.set("strictQuery", false)
+
 module.exports.connectDB = async(url) => {
   return mongoose.connect(url, {
     useNewUrlParser: true,
