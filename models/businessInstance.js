@@ -45,7 +45,11 @@ const BusinessSchema = mongoose.Schema({
     ],
     teamSize: {
         type: Number
-    }
+    },
+    // rating: {
+    //     type: Number,
+    //     default: 3
+    // }
 },
 { timestamps: true})
 

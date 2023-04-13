@@ -57,8 +57,18 @@ const getUnavailableTimes = async (req, res) => {
     res.status(StatusCodes.OK).json({ success: true, times, count: times.length })
 }
 
+// @desc list of businesses
+// @route GET /api/v1/business/all
+// @access All
+const getBusinesses = async (req, res) => {
+    const businesses = await Business.find().sort('createdAt')
+
+    res.status(StatusCodes.OK).json({businesses: businesses, count: businesses.length})
+}
+
 module.exports = {
     getServices,
     getService,
-    getUnavailableTimes
+    getUnavailableTimes,
+    getBusinesses
 }
