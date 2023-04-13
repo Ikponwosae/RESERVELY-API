@@ -14,7 +14,8 @@
     "mongoose": "^6.9.2",
     "nodemailer": "^6.9.1",
     "nodemailer-express-handlebars": "^6.0.0",
-    "nodemailer-smtp-transport": "^2.4.2"
+    "nodemailer-smtp-transport": "^2.4.2",
+    "path": "^0.12.7"
   },
   "name": "reservely-api",
   "version": "1.0.0",
