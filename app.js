@@ -10,7 +10,6 @@ const ROLES = {
   USER: "user"
 }
 
-
 //connectDB
 const { connectDB, startAgenda } = require('./db/connect')
 
@@ -46,7 +45,6 @@ app.use('/api/v1/owner', auth, authoRize(ROLES.SHOPOWNER), ownerRouter)
 app.use('/api/v1/business', businessRouter)
 app.use('/api/v1/staff', staffRouter)
 app.use('/api/v1/appointment', appointmentRouter)
-// app.use('/api/v1/jobs', auth, jobsRouter)
 
 
 app.use(notFoundMiddleware);
@@ -64,7 +62,7 @@ const start = async () => {
     );
     }
   } catch (error) {
-    console.log(error);
+    console.log("connection to db failed");
   }
 };
 

@@ -130,9 +130,7 @@ const getAvailableStaffs = async (req, res) => {
     });
 
     res.status(StatusCodes.OK).json({ success: true, availableStaff, count: availableStaff.length})
-
 }
-
 
 module.exports = {
     getDashboard,

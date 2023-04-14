@@ -10,23 +10,20 @@ const jwt = require("jsonwebtoken");
 const registerUser = async (req, res) => {
   const user = await User.create({ ...req.body });
   const token = user.createJWT();
-  // const url = `http://localhost:4000/api/v1/auth/verification/${String(token)}`
   const url = `${process.env.CLIENT_URL}/complete-registration/${String(
     token
   )}`;
 
   await verifyAccount(String(req.body.email), String(req.body.firstName), url);
 
-  res
-    .status(StatusCodes.CREATED)
-    .json({
-      user: {
-        FirstName: user.firstName,
-        LastName: user.lastName,
-        Email: user.email,
-      },
-      token,
-    });
+  res.status(StatusCodes.CREATED).json({
+    user: {
+      FirstName: user.firstName,
+      LastName: user.lastName,
+      Email: user.email,
+    },
+    token,
+  });
 };
 
 // @desc complete a users registration(active)....works for all user types
@@ -36,11 +33,7 @@ const completeRegistration = async (req, res) => {
   const { userId } = jwt.verify(req.params.token, process.env.JWT_SECRET);
   await User.updateOne({ _id: userId }, { $set: { status: "active" } });
   const user = await User.findById({ _id: userId });
-  // if(user.role == "shop-owner") {
-  //   res.status(StatusCodes.OK).redirect(`http://localhost:4000/api/v1/auth/register/business/${userId}`)
-  // }else{
-  //     res.status(StatusCodes.OK).redirect('http://localhost:4000/api/v1/auth/login')
-  // }
+  
   res.status(StatusCodes.OK).json({ user: { id: user._id, role: user.role } });
 };
 
@@ -63,7 +56,7 @@ const registerBusiness = async (req, res) => {
     regNumber,
     teamSize,
   } = req.body;
-  // const ownerId = req.user.userId
+
   const business = {
     name,
     hasPhysicalAddress,
@@ -84,16 +77,8 @@ const registerBusiness = async (req, res) => {
     { _id: userId },
     { $set: { business: newBusiness._id } }
   );
-  const updatedUser = User.findOne({ business: newBusiness._id });
-
+  
   res.status(StatusCodes.CREATED).json({
-    // owner: {
-    //   firstName: updatedUser.firstName,
-    //   lastName: updatedUser.lastName,
-    //   email: updatedUser.email,
-    //   role: updatedUser.role,
-    //   status: updatedUser.status,
-    // },
     business: {
       id: newBusiness._id,
       name: newBusiness.name,
@@ -158,17 +143,15 @@ const staffRegister = async (req, res) => {
   };
   const staff = await User.create({ ...user });
   const token = staff.createJWT();
-  res
-    .status(StatusCodes.CREATED)
-    .json({
-      staff: {
-        FirstName: staff.firstName,
-        LastName: staff.lastName,
-        staff: user.email,
-        business: staff.business,
-      },
-      token,
-    });
+  res.status(StatusCodes.CREATED).json({
+    staff: {
+      FirstName: staff.firstName,
+      LastName: staff.lastName,
+      staff: user.email,
+      business: staff.business,
+    },
+    token,
+  });
 };
 
 // @desc User Login
@@ -198,6 +181,7 @@ const login = async (req, res) => {
       email: user.email,
       role: user.role,
       status: user.status,
+      business: user.business,
     },
     token,
   });

@@ -2,7 +2,6 @@ const { Appointment, Business, Service } =  require('../models/index')
 const {StatusCodes} = require('http-status-codes')
 const { BadRequestError, UnauthenticatedError, NotFoundError } =  require('../errors/index')
 
-
 // @desc list of services under a business
 // @route GET /api/v1/business/:id/services
 // @access All
@@ -11,7 +10,6 @@ const getServices = async(req, res) => {
     if(!await Business.findOne({_id: bizId})){
         throw new NotFoundError('A business with that id cannot be found')
     }
-
     const services =  await Service.find({business: bizId}).sort('createdAt')
     res.status(StatusCodes.OK).json({services, count: services.length})
 }
@@ -61,14 +59,37 @@ const getUnavailableTimes = async (req, res) => {
 // @route GET /api/v1/business/all
 // @access All
 const getBusinesses = async (req, res) => {
-    const businesses = await Business.find().sort('createdAt')
+    const businesses = await Business.find().sort('createdAt').limit(10)
 
     res.status(StatusCodes.OK).json({businesses: businesses, count: businesses.length})
 }
+function escapeRegex(string) {
+    return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
+// @desc list of businesses
+// @route POST /api/v1/business/search
+// @access All
+const search = async (req, res) => {
+    const { search } = req.body
+
+    let businesses
+    try {
+      const regex = new RegExp(escapeRegex(search), "gi");
+      businesses =  await Business.find({
+        $or: [{ name: regex }, { country: regex }],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    res.status(StatusCodes.OK).json({businesses})
+}
+
 
 module.exports = {
     getServices,
     getService,
     getUnavailableTimes,
-    getBusinesses
+    getBusinesses,
+    search,
 }
