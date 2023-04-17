@@ -41,7 +41,7 @@ const addService = async (req, res) => {
     }    
 }
 
-// @desc update a services under a business
+// @desc update a service under a business
 // @route PATCH /api/v1/owner/service/:id
 // @access Shop Owner
 const updateService = async(req, res) => {

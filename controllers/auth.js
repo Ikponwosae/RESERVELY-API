@@ -202,9 +202,27 @@ const getUser = async (req, res) => {
       email: user.email,
       role: user.role,
       status: user.status,
+      address: user.address,
+      phoneNumber: user.phoneNumber,
     },
   });
 };
+
+// @desc update a user
+// @route PATCH /api/v1/auth/user/:id/edit
+// @access Shop Owner
+const updateUser = async(req, res) => {
+  const { params:{id: userId}} = req
+  const user = await User.findOne({_id: userId})
+  if(!user) {
+      throw new NotFoundError('User cannot be found')
+  }
+
+  const updates = req.body
+  await User.updateOne({_id: userId}, {$set: updates})
+
+  res.status(StatusCodes.OK).json({ success: true, user})
+}
 
 module.exports = {
   registerUser,
@@ -214,4 +232,5 @@ module.exports = {
   login,
   completeRegistration,
   getUser,
+  updateUser,
 };

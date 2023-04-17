@@ -85,6 +85,34 @@ const search = async (req, res) => {
     res.status(StatusCodes.OK).json({businesses})
 }
 
+//@desc Get business by ID
+//@route GET api/v1/business/:id
+const getBusiness = async (req, res) => {
+    const { id } = req.params;
+    const business = await Business.findOne({ _id: id });
+    if (!business) throw new UnauthenticatedError("Invalid Id");
+  
+    res.status(StatusCodes.OK).json({ business });
+};
+
+// @desc update  business
+// @route PATCH /api/v1/business/:id/edit
+// @access Shop Owner
+const updateBusiness = async(req, res) => {
+    const owner = await User.findById({_id: req.user.userId})
+    const { params:{id: businessId}} = req
+    const business = await Business.findOne({_id: serviceId})
+    if(!business) {
+        throw new NotFoundError('Business cannot be found')
+    } else if(String(business._id) !== String(owner.business)) {
+        throw new UnauthenticatedError('You are not authorized to edit this item')
+    }
+
+    const updates = req.body
+    await Business.updateOne({_id: businessId}, {$set: updates})
+
+    res.status(StatusCodes.OK).json({ success: true, business})
+}
 
 module.exports = {
     getServices,
@@ -92,4 +120,6 @@ module.exports = {
     getUnavailableTimes,
     getBusinesses,
     search,
+    getBusiness,
+    updateBusiness,
 }
