@@ -132,11 +132,52 @@ const getAvailableStaffs = async (req, res) => {
     res.status(StatusCodes.OK).json({ success: true, availableStaff, count: availableStaff.length})
 }
 
+const getStats = async (req, res) => {
+    const user = req.user.userId
+    if(!user) throw new UnauthenticatedError('You have to be logged in to see waitlist')
+
+    const owner = await User.findById({_id: user})
+
+    const waiting = await Appointment.find({ 
+        business: owner.business 
+    })
+    .where({ status: 'waiting' })
+
+    const approved = await Appointment.find({ 
+        business: owner.business 
+    })
+    .where({ status: 'approved' })
+
+    const closed = await Appointment.find({ 
+        business: owner.business 
+    })
+    .where({ status: 'closed' })
+
+    res.status(StatusCodes.OK).json({ success: true, count: [
+        {
+            id: 1,
+            name: "waiting",
+            value: waiting.count
+        },
+        {
+            id: 2,
+            name: "approved",
+            value: approved.count
+        },
+        {
+            id: 3,
+            name: "closed",
+            value: closed.count
+        }
+    ]})
+}
+
 module.exports = {
     getDashboard,
     addService,
     updateService,
     deleteService,
     getWaitList,
-    getAvailableStaffs
+    getAvailableStaffs,
+    getStats,
 }

@@ -68,14 +68,14 @@ function escapeRegex(string) {
 }
 
 // @desc list of businesses
-// @route POST /api/v1/business/search
+// @route GET /api/v1/business/search
 // @access All
 const search = async (req, res) => {
-    const { search } = req.body
+    const { term } = req.params
 
     let businesses
     try {
-      const regex = new RegExp(escapeRegex(search), "gi");
+      const regex = new RegExp(escapeRegex(term), "gi");
       businesses =  await Business.find({
         $or: [{ name: regex }, { country: regex }],
       });

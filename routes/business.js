@@ -9,7 +9,7 @@ router.get('/:id/services/:serviceId', getService)
 router.get('/:id/services/:serviceId/unavailable/:year-:month-:day', getUnavailableTimes)
 router.get('/all', getBusinesses)
 router.post('/:id/book', auth, authoRize('user'), createAppointment)
-router.post('/search', search)
+router.get('/search/:term', search)
 router.get('/:id', getBusiness)
 router.patch('/:id/edit', auth, authoRize('shop-owner'), updateBusiness)
 
