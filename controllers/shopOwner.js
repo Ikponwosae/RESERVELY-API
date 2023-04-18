@@ -157,17 +157,17 @@ const getStats = async (req, res) => {
         {
             id: 1,
             name: "waiting",
-            value: waiting.count
+            vas: waiting.count
         },
         {
             id: 2,
             name: "approved",
-            value: approved.count
+            vas: approved.count
         },
         {
             id: 3,
             name: "closed",
-            value: closed.count
+            vas: closed.count
         }
     ]})
 }
