@@ -8,7 +8,8 @@ const {
     deleteService, 
     getWaitList,
     getAvailableStaffs,
-    getStats
+    getStats,
+    getAppointments
 } = require('../controllers/shopOwner')
 const { inviteStaff } = require('../controllers/auth')
 
@@ -19,5 +20,6 @@ router.route('/service/:id').patch(updateService).delete(deleteService)
 router.get('/waitlist', getWaitList)
 router.get('/staff/available/:year-:month-:day', getAvailableStaffs)
 router.get('/stats', getStats)
+router.get('/appointments', getAppointments)
 
 module.exports = router

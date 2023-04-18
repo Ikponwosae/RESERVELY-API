@@ -172,6 +172,17 @@ const getStats = async (req, res) => {
     ]})
 }
 
+const getAppointments = async(req, res) =>{
+    const user = req.user.userId
+    if(!user) throw new UnauthenticatedError('You have to be logged in to see appointments')
+
+    const appointments = await Appointment.find({ 
+        business: owner.business 
+    });
+
+    res.status(StatusCodes.OK).json({ success: true, appointments, count: appointments.length})
+}
+
 module.exports = {
     getDashboard,
     addService,
@@ -180,4 +191,5 @@ module.exports = {
     getWaitList,
     getAvailableStaffs,
     getStats,
+    getAppointments,
 }
