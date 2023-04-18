@@ -177,7 +177,7 @@ const getAppointments = async(req, res) =>{
     if(!user) throw new UnauthenticatedError('You have to be logged in to see appointments')
 
     const appointments = await Appointment.find({ 
-        business: owner.business 
+        business: user.business 
     });
 
     res.status(StatusCodes.OK).json({ success: true, appointments, count: appointments.length})
